@@ -1,9 +1,9 @@
 {
-  "name": "khav-beta",
+  "name": "khav-frontend",
   "private": true,
-  "version": "0.1.0-beta",
+  "version": "0.1.0",
   "type": "module",
-  "description": "KHAV 동물질병진단센터 7/1 최소모듈 베타 (의뢰 접수 + 결괏값) — mock 데이터",
+  "description": "KHAV 동물질병진단센터 프론트엔드 (1차) — 실 백엔드 계약 기준 + 교체형 mock 어댑터",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",

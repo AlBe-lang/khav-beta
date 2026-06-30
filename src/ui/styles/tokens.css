@@ -77,3 +77,6 @@ td, th { padding: 8px 6px; border-bottom: 1px solid var(--line); text-align: lef
 .steps { display: flex; gap: 6px; margin-bottom: 12px; }
 .steps span { flex: 1; height: 4px; border-radius: 2px; background: var(--line); }
 .steps span.on { background: var(--green-vivid); }
+
+.b-작성중 { background: #f3f4f6; color: #4b5563; }
+.devcode { background:#eef2ff; color:#3730a3; padding:8px 12px; border-radius:8px; font-size:13px; margin-top:8px; }

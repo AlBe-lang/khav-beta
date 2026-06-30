@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { HOUSING, PURPOSE, SPECIES, type CaseSaveRequest, type FarmResponse, type HousingType, type RequestPurpose, type Species, type TestItemResponse } from "../../domain/types";
 import { calcAge } from "../../domain/logic";
 import { errMsg, useStore } from "../../features/store";
-import { Field, Header } from "../components/shared";
+import { Field } from "../components/shared";
 
 const SYMPTOMS: Array<[keyof CaseSaveRequest, string]> = [
   ["mortalityIncrease", "폐사 증가"], ["layingRateDrop", "산란율 저하"], ["weightGainDrop", "증체 저하"],
@@ -64,9 +64,9 @@ export function CaseForm() {
 
   return (
     <>
-      <Header title="진단 의뢰" sub="의뢰인 (회원)" />
-      <div className="main">
-        <p className="note">* 필수 항목 미입력 시 제출되지 않습니다. (제출=접수 검토 중)</p>
+      <div className="pagehead"><div><h1>진단 의뢰</h1><p>의뢰인 (회원) · 멀티스텝 양식</p></div></div>
+      <div className="formcol">
+        <div className="info">* 필수 항목 미입력 시 제출되지 않습니다. (제출 = 접수 검토 중)</div>
         <div className="card">
           <div className="title">1. 농장·축종</div>
           <Field label="농장" req>

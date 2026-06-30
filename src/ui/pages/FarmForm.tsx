@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { AddressResponse, FarmResponse } from "../../domain/types";
 import { errMsg, useStore } from "../../features/store";
-import { Field, Header } from "../components/shared";
+import { Field } from "../components/shared";
 
 export function FarmForm() {
   const { api, navigate } = useStore();
@@ -28,12 +28,13 @@ export function FarmForm() {
 
   return (
     <>
-      <Header title="농장 관리" />
-      <div className="main">
+      <div className="pagehead"><div><h1>농장 관리</h1><p>등록한 농장은 의뢰 시 선택·재사용합니다.</p></div></div>
+      <div className="grid2">
         <div className="card">
-          <div className="muted">등록한 농장은 의뢰 시 선택·재사용합니다.</div>
+          <div className="title">내 농장</div>
+          {farms.length === 0 && <p className="muted">등록된 농장이 없습니다.</p>}
           {farms.map((f) => (
-            <div key={f.id} style={{ padding: "8px 0", borderBottom: "1px solid var(--line)" }}>
+            <div key={f.id} className="farmrow">
               <b>{f.farmName}</b> <span className="muted">({f.ownerName})</span>
               <div className="muted">{f.provinceName} {f.districtName}</div>
             </div>
@@ -41,7 +42,7 @@ export function FarmForm() {
         </div>
         <div className="card">
           <div className="title">＋ 새 농장 등록</div>
-          <p className="note">농장명·축주명·주소 필수.</p>
+          <p className="info">농장명·축주명·주소가 필수입니다.</p>
           <Field label="농장명" req><input value={farmName} onChange={(e) => setFarmName(e.target.value)} placeholder="예: 성원농장" /></Field>
           <Field label="축주명" req><input value={ownerName} onChange={(e) => setOwnerName(e.target.value)} /></Field>
           <Field label="농장 주소 (도로명·우편번호 검색)" req>

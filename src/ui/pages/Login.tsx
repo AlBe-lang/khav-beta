@@ -41,13 +41,16 @@ export function Login() {
   }
 
   return (
-    <>
-      <div className="header"><div><b>KHAV 동물질병진단센터</b><small>KONKUK Univ. Poultry D-Lab</small></div></div>
-      <div className="main">
-        <div className="card">
-          <div className="row" style={{ marginBottom: 12 }}>
-            <button className={`btn sm ${mode === "login" ? "" : "sec"}`} onClick={() => setMode("login")}>로그인</button>
-            <button className={`btn sm ${mode === "signup" ? "" : "sec"}`} onClick={() => setMode("signup")}>회원가입</button>
+    <div className="shell">
+      <div className="topnav"><span className="brand">KHAV 동물질병진단센터</span></div>
+      <div className="content authwrap">
+        <div className="card authcard">
+          <h2 className="authtitle">의뢰인 로그인</h2>
+          <p className="authsub">KONKUK Univ. 가금질병 진단검사실</p>
+
+          <div className="tabs">
+            <button className={`tab ${mode === "login" ? "on" : ""}`} onClick={() => setMode("login")}>로그인</button>
+            <button className={`tab ${mode === "signup" ? "on" : ""}`} onClick={() => setMode("signup")}>회원가입</button>
           </div>
 
           <Field label="아이디" req><input value={loginId} onChange={(e) => setLoginId(e.target.value)} placeholder="데모: vet / admin" /></Field>
@@ -61,10 +64,10 @@ export function Login() {
               <Field label="연락처 (SMS 본인인증)" req>
                 <div className="row">
                   <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="010-0000-0000" disabled={verified} />
-                  <button className="btn sm sec" onClick={sendCode} disabled={!phone || verified}>인증번호</button>
+                  <button className="btn sec sm" onClick={sendCode} disabled={!phone || verified}>인증번호</button>
                 </div>
               </Field>
-              {devCode && !verified && <div className="devcode">📩 (mock) 인증번호: <b>{devCode}</b> — 실서버는 SMS로만 발송됩니다.</div>}
+              {devCode && !verified && <div className="info">📩 (mock) 인증번호: <b>{devCode}</b> — 실서버는 SMS로만 발송됩니다.</div>}
               {!verified && devCode && (
                 <Field label="인증번호 입력" req>
                   <div className="row">
@@ -73,21 +76,23 @@ export function Login() {
                   </div>
                 </Field>
               )}
-              {verified && <div className="note" style={{ marginTop: 8 }}>✓ 휴대폰 인증 완료</div>}
-              <label className="row" style={{ marginTop: 12 }}>
-                <input type="checkbox" style={{ width: 18 }} checked={agree} onChange={(e) => setAgree(e.target.checked)} />
-                <span style={{ fontWeight: 400 }}>개인정보 수집·이용에 동의합니다. (필수)</span>
+              {verified && <div className="info ok">✓ 휴대폰 인증 완료</div>}
+              <label className="check">
+                <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} />
+                <span>개인정보 수집·이용에 동의합니다. (필수)</span>
               </label>
             </>
           )}
 
-          <div style={{ marginTop: 16 }}>
-            <button className="btn" onClick={submit}>{mode === "login" ? "로그인" : "가입하고 시작"}</button>
-          </div>
           {err && <div className="err">{err}</div>}
-          <p className="muted" style={{ marginTop: 12 }}>※ 회원제 · 가입 시 SMS 본인인증. 데이터는 mock(브라우저 저장).</p>
+          <button className="btn" style={{ marginTop: 16 }} onClick={submit}>{mode === "login" ? "로그인" : "가입하고 시작"}</button>
+          <button className="btn kakao" onClick={() => setErr("카카오 로그인은 실서버 연동 후 제공됩니다.")}>카카오로 시작하기</button>
+
+          <div className="info" style={{ marginTop: 16 }}>
+            ※ 회원제 서비스입니다. 가입 시 SMS 본인인증이 필요하며, 데이터는 mock(브라우저 저장)으로 동작합니다.
+          </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

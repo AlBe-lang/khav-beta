@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { VERDICT, type AdminCaseSummaryResponse, type CaseDetailResponse, type DashboardResponse, type PendingCaseResponse, type Verdict } from "../../domain/types";
 import { errMsg, useStore } from "../../features/store";
-import { StatusBadge } from "../components/shared";
+import { AdminShell, StatusBadge } from "../components/shared";
 
 export function Admin() {
-  const { api, logout, me } = useStore();
+  const { api, me } = useStore();
   const isAdmin = me?.role === "관리자";
   const [dash, setDash] = useState<DashboardResponse | null>(null);
   const [pending, setPending] = useState<PendingCaseResponse[]>([]);
@@ -31,15 +31,12 @@ export function Admin() {
   }
 
   return (
-    <>
-      <div className="header"><div><b>KHAV 관리자 CMS</b><small>접수·결과·통보</small></div>
-        <button className="btn sm sec" onClick={logout}>로그아웃</button></div>
-      <div className="main">
+    <AdminShell title={isAdmin ? "대시보드" : "결과 등록"}>
         {err && <div className="err">{err}</div>}
         {dash && (
-          <div className="card row" style={{ justifyContent: "space-around", textAlign: "center" }}>
-            {([["검토중", dash.reviewing], ["접수", dash.accepted], ["검사중", dash.testing], ["완료", dash.completed]] as const).map(([k, v]) => (
-              <div key={k}><div style={{ fontSize: 20, fontWeight: 800, color: "var(--green-deep)" }}>{v}</div><div className="muted">{k}</div></div>
+          <div className="stats stats4">
+            {([["검토중", dash.reviewing, "warn"], ["접수", dash.accepted, ""], ["검사중", dash.testing, ""], ["완료", dash.completed, "done"]] as const).map(([k, v, cls]) => (
+              <div key={k} className={`stat ${cls}`}><span className="label">{k}</span><span className="num">{v}</span></div>
             ))}
           </div>
         )}
@@ -47,10 +44,10 @@ export function Admin() {
         {isAdmin && (
           <div className="card">
             <div className="title">도착 대기 (접수 확정)</div>
-            <p className="note">실물 도착 확인 후 「접수 확정」 시 접수번호 발급·TAT 시작.</p>
+            <p className="info">실물 도착 확인 후 「접수 확정」 시 접수번호 발급·TAT 시작.</p>
             {pending.length === 0 && <p className="muted">대기 없음.</p>}
             {pending.map((p) => (
-              <div key={p.caseId} className="spread" style={{ padding: "8px 0", borderBottom: "1px solid var(--line)" }}>
+              <div key={p.caseId} className="spread" style={{ padding: "10px 0", borderBottom: "1px solid var(--divider)" }}>
                 <div><b>{p.farmName} / {p.species}</b><div className="muted">{p.requesterName} · {p.submittedAt.slice(0, 10)}</div></div>
                 <button className="btn sm" onClick={() => act(() => api.accept(p.caseId))}>✓ 접수 확정</button>
               </div>
@@ -58,16 +55,25 @@ export function Admin() {
           </div>
         )}
 
-        <div className="spread"><div className="title">의뢰 목록</div><button className="btn sm sec" onClick={exportCsv}>엑셀 내보내기</button></div>
-        {cases.map((x) => (
-          <div key={x.caseId} className="card" onClick={() => open(x.caseId)}>
-            <div className="spread"><b>{x.receiptNumber ?? "발급 전"}</b><StatusBadge status={x.status} /></div>
-            <div className="muted" style={{ marginTop: 4 }}>{x.farmName} / {x.species} · {x.institution ?? x.requesterName}</div>
-          </div>
-        ))}
+        <div className="card">
+          <div className="spread"><div className="title" style={{ margin: 0 }}>의뢰 목록</div><button className="btn sm sec" onClick={exportCsv}>엑셀 내보내기</button></div>
+          <table className="table">
+            <thead><tr><th>접수번호</th><th>농장 / 축종</th><th>의뢰기관</th><th>상태</th></tr></thead>
+            <tbody>
+              {cases.map((x) => (
+                <tr key={x.caseId} onClick={() => open(x.caseId)} className={sel?.id === x.caseId ? "on" : ""}>
+                  <td><b>{x.receiptNumber ?? "발급 전"}</b></td>
+                  <td>{x.farmName} / {x.species}</td>
+                  <td>{x.institution ?? x.requesterName}</td>
+                  <td><StatusBadge status={x.status} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         {sel && sel.status !== "검토중" && (
-          <div className="card" style={{ borderColor: "var(--green-deep)" }}>
+          <div className="card" style={{ borderColor: "var(--brand)" }}>
             <div className="title">결과 등록 · {sel.receiptNumber}</div>
             {sel.tests.map((t) => <ResultRow key={t.id} name={t.testItemName} done={t.status === "완료"} verdict={t.verdict}
               onSubmit={(v, m) => act(async () => { await api.enterResult(sel.id, t.id, { verdict: v, measuredValue: m }); await api.setTestStatus(sel.id, t.id, "완료"); })} />)}
@@ -82,8 +88,7 @@ export function Admin() {
             )}
           </div>
         )}
-      </div>
-    </>
+    </AdminShell>
   );
 }
 
